@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   arg_validation.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:35 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/17 03:18:14 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/17 22:58:17 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "codexion.h"
+#include "../codexion.h"
 
 static const char	*get_arg_name(int i)
 {
@@ -27,13 +27,33 @@ static const char	*get_arg_name(int i)
 	return (names[i]);
 }
 
-static int	check_int(char *arg)
+static int	print_error(int arg_i, int error_i)
+{
+	fprintf(stderr, "ERROR! Argument: %d (%s). ", arg_i, get_arg_name(arg_i));
+	if (error_i == 0)
+		fprintf(stderr, "Empty argument!\n");
+	if (error_i == -1)
+		fprintf(stderr, "Argument must be only digits!\n");
+	if (error_i == -2)
+		fprintf(stderr, "Int overflow!\n");
+	if (error_i == -3)
+		fprintf(stderr, "Must be either 'fifo' or 'edf'!\n");
+	if (error_i == -4)
+		fprintf(stderr, "Must have at least 1 coder!\n");
+	return (1);
+}
+
+/* ! Right now I allow value 0 for parameters (1 to 6)... Maybe I have to change
+this later */
+static int	check_arg_int(char *arg)
 {
 	size_t		i;
 	const char	*int_max;
 
 	if (!arg[0])
 		return (0);
+	while (*arg == '0')
+		arg++;
 	i = 0;
 	while (arg[i])
 	{
@@ -47,42 +67,39 @@ static int	check_int(char *arg)
 	if (strlen(arg) == 10)
 	{
 		if (strcmp(arg, int_max) > 0)
-			return (-3);
+			return (-2);
 	}
 	return (1);
 }
 
-void	print_error(int arg_i, int error_i)
+static int	is_arg_zero(char *arg)
 {
-	printf("ERROR! argument %d (%s). ", arg_i, get_arg_name(arg_i));
-	if (error_i == 0)
-		printf("Empty argument!\n");
-	if (error_i == -1)
-		printf("Argument must be only digits!\n");
-	if (error_i == -2)
-		printf("Int overflow!\n");
-	if (error_i == -3)
-		printf("Scheduler must be either 'fifo' or 'edf'!\n");
+	while (*arg == '0')
+		arg++;
+	if (!*arg)
+		return (1);
+	return (0);
 }
 
-int	check_arg(int argc, char **argv)
+/* ! once flag is set to 1, it should not comeback to 0 */
+int	check_arg(char **argv)
 {
-	unsigned int	check_args;
+	unsigned int	flag;
 	int				valid;
 	int				i;
 
-	check_args = 1;
+	flag = 0;
 	i = 0;
-	while (i < argc - 1)
+	if (argv[0][0] && is_arg_zero(argv[0]))
+		flag = print_error(0, -4);
+	while (i < 7)
 	{
-		valid = check_int(argv[i]);
+		valid = check_arg_int(argv[i]);
 		if (valid <= 0)
-		{
-			print_error(i, valid);
-			check_args = 0;
-		}
+			flag = print_error(i, valid);
 		i++;
 	}
-	printf("scheduler %s\n", argv[i]);
-	return (check_args);
+	if (strcmp(argv[7], "fifo") != 0 && strcmp(argv[7], "edf") != 0)
+		flag = print_error(7, -3);
+	return (flag);
 }
