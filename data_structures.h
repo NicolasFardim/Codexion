@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/17 22:48:08 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/18 01:49:33 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 
 typedef struct s_config
 {
-	int		number_of_coders;
-	int		time_to_burnout;
-	int		time_to_compile;
-	int		time_to_debug;
-	int		time_to_refactor;
-	int		number_of_compiles_required;
-	int		dongle_cooldown;
+	unsigned int	number_of_coders;
+	unsigned int	time_to_burnout;
+	unsigned int	time_to_compile;
+	unsigned int	time_to_debug;
+	unsigned int	time_to_refactor;
+	unsigned int	number_of_compiles_required;
+	unsigned int	dongle_cooldown;
 	char	*scheduler;
 }	t_config;
 

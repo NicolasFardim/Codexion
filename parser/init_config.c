@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 20:04:25 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/17 22:57:06 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/18 01:25:36 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,3 +23,6 @@ void	init_config(char **argv, t_config *config)
 	config->dongle_cooldown = atoi(argv[6]);
 	config->scheduler = argv[7];
 }
+
+/* scheduler points into argv; valid for program lifetime,
+no free needed */
