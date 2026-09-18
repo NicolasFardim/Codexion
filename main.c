@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:31 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/17 23:09:01 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/18 02:10:35 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,37 @@ void	debug_print_config(t_config *c)
 		c->number_of_coders, c->time_to_burnout, c->time_to_compile,
 		c->time_to_debug, c->time_to_refactor, c->number_of_compiles_required,
 		c->dongle_cooldown, c->scheduler);
+}
+
+void	*fake_routine(void *arg)
+{
+	(void)arg;
+	return NULL;
+}
+
+pthread_t	*init_threads(t_config *c)
+{
+	pthread_t	th[c->number_of_coders];
+	unsigned int	i;
+
+	i = 0;
+	while (i < c->number_of_coders)
+	{
+		if (pthread_create(&th[i], NULL, fake_routine, NULL) != 0)
+			fprintf(stderr, "Couldn't create thread %u!", i);
+		i++;
+	}
+	return (th);
+}
+
+void	join_threads(pthread_t	*th)
+{
+	while(*th)
+	{
+		if (pthread_join(&*th, NULL) != 0)
+			fprintf(stderr, "Couldn't joing thread!");
+		th++;
+	}
 }
 
 int	main(int argc, char **argv)
@@ -41,5 +72,6 @@ int	main(int argc, char **argv)
 	}
 	init_config(&argv[1], &config);
 	debug_print_config(&config);
+	init_threads(&config);
 	return (0);
 }
