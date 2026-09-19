@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:31 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/18 02:10:35 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/19 15:34:47 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,33 +29,53 @@ void	*fake_routine(void *arg)
 	return NULL;
 }
 
-pthread_t	*init_threads(t_config *c)
+static unsigned int	init_threads(pthread_t **th, unsigned int n_coders)
 {
-	pthread_t	th[c->number_of_coders];
 	unsigned int	i;
 
 	i = 0;
-	while (i < c->number_of_coders)
+	*th = malloc(sizeof(pthread_t) * n_coders);
+	if (*th == NULL)
 	{
-		if (pthread_create(&th[i], NULL, fake_routine, NULL) != 0)
+		fprintf(stderr, "Error allocating memory to threads!\n");
+		return (0);
+	}
+	while (i < n_coders)
+	{
+		if (pthread_create(&(*th)[i], NULL, fake_routine, NULL) != 0)
+		{
 			fprintf(stderr, "Couldn't create thread %u!", i);
+			free(*th);
+			return (0);
+		}
 		i++;
 	}
-	return (th);
+	return (1);
 }
 
-void	join_threads(pthread_t	*th)
+static unsigned int	join_threads(pthread_t *th, unsigned int n_coders)
 {
-	while(*th)
+	unsigned int	i;
+	unsigned int	check;
+
+	check = 1;
+	i = 0;
+	while(i < n_coders)
 	{
-		if (pthread_join(&*th, NULL) != 0)
-			fprintf(stderr, "Couldn't joing thread!");
-		th++;
+		if (pthread_join(th[i], NULL) != 0)
+		{
+			fprintf(stderr, "Couldn't join thread %d!\n", i);
+			check = 0;
+		}
+		i++;
 	}
+	free(th);
+	return (check);
 }
 
 int	main(int argc, char **argv)
 {
+	pthread_t	*th;
 	t_config	config;
 	int			flag;
 
@@ -72,6 +92,9 @@ int	main(int argc, char **argv)
 	}
 	init_config(&argv[1], &config);
 	debug_print_config(&config);
-	init_threads(&config);
+	if (!init_threads(&th, config.number_of_coders));
+		return (1);
+	join_threads(th, config.number_of_coders);
+
 	return (0);
 }
