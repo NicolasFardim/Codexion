@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/18 01:49:33 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/20 15:52:30 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,15 @@ typedef struct s_config
 	unsigned int	dongle_cooldown;
 	char	*scheduler;
 }	t_config;
+
+typedef struct s_coder
+{
+	pthread_t	th;
+}	t_coder;
+
+typedef struct s_dongle
+{
+
+}	t_dongle;
 
 #endif
