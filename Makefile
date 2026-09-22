@@ -7,11 +7,13 @@ OBJ_DIR = obj
 SRCS = main.c \
 		parser/arg_validation.c \
 		parser/parser_helper.c \
-		parser/init_config.c
+		parser/init_config.c \
+		rotine.c
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 
 VPATH = parser
+
 
 all: $(BIN)
 

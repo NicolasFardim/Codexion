@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:48 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/18 01:26:57 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/22 15:04:32 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,13 @@
 # include <stdlib.h>
 # include <string.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 # include "data_structures.h"
 
 int		check_arg(char **argv);
 void	init_config(char **argv, t_config *config);
+void	*routine(void *arg);
+void	start_coders(t_coder *coder, t_config *config, int i);
 
 #endif

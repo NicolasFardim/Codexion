@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/20 15:52:30 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/22 15:01:21 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 typedef struct s_config
 {
+	struct timespec	ts;
 	unsigned int	number_of_coders;
 	unsigned int	time_to_burnout;
 	unsigned int	time_to_compile;
@@ -22,17 +23,28 @@ typedef struct s_config
 	unsigned int	time_to_refactor;
 	unsigned int	number_of_compiles_required;
 	unsigned int	dongle_cooldown;
-	char	*scheduler;
+	char			*scheduler;
 }	t_config;
+
+typedef enum e_state
+{
+	COMPILING,
+	DEBUGGING,
+	REFACTORING
+}	t_state;
 
 typedef struct s_coder
 {
-	pthread_t	th;
+	pthread_t		thread;
+	t_config		*config;
+	t_state			state;
+	unsigned int	id;
 }	t_coder;
 
 typedef struct s_dongle
 {
-
 }	t_dongle;
+
+
 
 #endif

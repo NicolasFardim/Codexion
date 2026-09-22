@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:31 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/20 15:52:34 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/22 15:30:30 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,6 @@ void	debug_print_config(t_config *c)
 		c->dongle_cooldown, c->scheduler);
 }
 
-// delete this later
-void	*fake_routine(void *arg)
-{
-	(void)arg;
-	return NULL;
-}
-
 static unsigned int	join_threads(t_coder *coder, unsigned int n_coders)
 {
 	unsigned int	i;
@@ -40,7 +33,7 @@ static unsigned int	join_threads(t_coder *coder, unsigned int n_coders)
 	i = 0;
 	while(i < n_coders)
 	{
-		if (pthread_join(coder[i].th, NULL) != 0)
+		if (pthread_join(coder[i].thread, NULL) != 0)
 		{
 			fprintf(stderr, "Couldn't join thread %d!\n", i);
 			check = 0;
@@ -51,18 +44,18 @@ static unsigned int	join_threads(t_coder *coder, unsigned int n_coders)
 	return (check);
 }
 
-static unsigned int	init_threads(t_coder **coder, unsigned int n_coders)
+static unsigned int	init_threads(t_coder **coder, t_config *config)
 {
 	unsigned int	i;
 
 	i = 0;
-	*coder = malloc(sizeof(pthread_t) * n_coders);
+	*coder = malloc(sizeof(t_coder) * config->number_of_coders);
 	if (*coder == NULL)
 	{
 		fprintf(stderr, "Error allocating memory to threads!\n");
 		return (0);
 	}
-	while (i < n_coders)
+	while (i < config->number_of_coders)
 	{
 		/* test to force fail (it works will free every initialized thread
 		also works if the first '0' fails)
@@ -71,7 +64,10 @@ static unsigned int	init_threads(t_coder **coder, unsigned int n_coders)
 			join_threads(*th, i);
 			return (0);
 		} */
-		if (pthread_create(&(*coder)[i].th, NULL, fake_routine, NULL) != 0)
+		start_coders(&(*coder)[i], config, i);
+		if (pthread_create(
+			&(*coder)[i].thread, NULL, routine, &(*coder)[i]) != 0
+		)
 		{
 			fprintf(stderr, "Couldn't create thread %u!", i);
 			join_threads(*coder, i);
@@ -102,8 +98,8 @@ int	main(int argc, char **argv)
 	}
 	init_config(&argv[1], &config);
 	debug_print_config(&config);
-	return(1);
-	if (!init_threads(&coder, config.number_of_coders))
+	printf("\n");
+	if (!init_threads(&coder, &config))
 		return (1);
 	join_threads(coder, config.number_of_coders);
 
