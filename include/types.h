@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data_structures.h                                  :+:      :+:    :+:   */
+/*   types.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/22 16:04:23 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/03 20:26:37 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DATA_STRUCTURES_H
-# define DATA_STRUCTURES_H
+#ifndef TYPES_H
+# define TYPES_H
+
+typedef	struct s_sim	t_sim;
 
 typedef struct s_config
 {
-	struct timespec	ts;
 	unsigned int	number_of_coders;
 	unsigned int	time_to_burnout;
 	unsigned int	time_to_compile;
@@ -36,15 +37,22 @@ typedef enum e_state
 typedef struct s_coder
 {
 	pthread_t		thread;
-	t_config		*config;
 	t_state			state;
 	unsigned int	id;
+	unsigned int	compiles;
+	t_sim			*bp_sim;
 }	t_coder;
 
 typedef struct s_dongle
 {
 }	t_dongle;
 
+struct s_sim
+{
+	t_coder			*coder;
+	t_config		config;
+	struct timeval	start;
+};
 
 
 #endif

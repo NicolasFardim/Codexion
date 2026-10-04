@@ -1,39 +1,39 @@
-CC = gcc
-BIN = codexion
-CFLAGS = -Wall -Wextra -Werror
+CC			= cc
+NAME 		= codexion
+CFLAGS 		= -pthread -Wall -Wextra -Werror
 
-OBJ_DIR = obj
+OBJ_DIR 	= obj
 
-SRCS = main.c \
-		parser/arg_validation.c \
-		parser/parser_helper.c \
-		parser/init_config.c \
-		rotine.c
+SRCS 		= src/main.c \
+			  src/parser/validate_args.c \
+			  src/parser/parse_args.c \
+			  src/init/init_sim.c \
+			  src/sim/routine.c
 
-OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
+OBJS 		= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
+HEADERS		= include/codexion.h include/types.h
 
-VPATH = parser
+VPATH 		= src:src/parser:src/init:src/sim
 
-
-all: $(BIN)
+all: $(NAME)
 
 $(OBJ_DIR):
 	mkdir -p $@
 
-$(BIN): $(OBJS)
+$(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-$(OBJ_DIR)/%.o: %.c codexion.h data_structures.h | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: %.c $(HEADERS) | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -Iinclude -c $< -o $@
 
 normie:
-	norminette $(SRCS) codexion.h data_structures.h
+	norminette $(SRCS) $(HEADERS)
 
 clean:
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -rf $(BIN)
+	rm -rf $(NAME)
 
 re: fclean all
 

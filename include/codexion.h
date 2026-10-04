@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:48 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/22 15:04:32 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/09/29 15:45:04 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,18 @@
 # define CODEXION_H
 
 # include <stdio.h>
+# include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
 # include <pthread.h>
 # include <sys/time.h>
+# include "types.h"
 
-# include "data_structures.h"
-
-int		check_arg(char **argv);
-void	init_config(char **argv, t_config *config);
-void	*routine(void *arg);
-void	start_coders(t_coder *coder, t_config *config, int i);
+unsigned int	parse_args(int argc, char **argv, t_config *config);
+unsigned int	validate_args(char **argv);
+unsigned int	init_sim(t_sim *sim);
+unsigned int	start_threads(t_sim *sim);
+void			join_threads(t_sim *sim);
+void			*routine(void *arg);
 
 #endif
