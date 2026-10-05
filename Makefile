@@ -8,6 +8,8 @@ SRCS 		= src/main.c \
 			  src/parser/validate_args.c \
 			  src/parser/parse_args.c \
 			  src/init/init_sim.c \
+			  src/init/free_sim.c \
+			  src/sim/helpers.c \
 			  src/sim/routine.c
 
 OBJS 		= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))

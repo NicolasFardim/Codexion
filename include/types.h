@@ -6,12 +6,15 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/03 20:26:37 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/06 00:44:14 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TYPES_H
 # define TYPES_H
+
+# include <pthread.h>
+# include <sys/time.h>
 
 typedef	struct s_sim	t_sim;
 
@@ -34,25 +37,32 @@ typedef enum e_state
 	REFACTORING
 }	t_state;
 
+typedef struct s_dongle
+{
+	pthread_mutex_t	dongle_lock;
+	unsigned int	id;
+}	t_dongle;
+
 typedef struct s_coder
 {
 	pthread_t		thread;
 	t_state			state;
+	t_dongle		*left_dongle;
+	t_dongle		*right_dongle;
 	unsigned int	id;
 	unsigned int	compiles;
 	t_sim			*bp_sim;
 }	t_coder;
 
-typedef struct s_dongle
-{
-}	t_dongle;
-
 struct s_sim
 {
 	t_coder			*coder;
+	t_dongle		*dongle;
 	t_config		config;
-	struct timeval	start;
+	pthread_mutex_t	print_lock;
+	pthread_mutex_t	sim_lock;
+	long long int	start_ms;
+	unsigned int	active_lock;
 };
-
 
 #endif
