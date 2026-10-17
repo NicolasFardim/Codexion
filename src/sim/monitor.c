@@ -26,14 +26,6 @@ static unsigned int	check_compiles(t_sim *sim, unsigned int i)
 	return (r);
 }
 
-// temporary function delete later
-static void	log_burnout(t_sim *sim, unsigned int i)
-{
-	pthread_mutex_lock(&sim->print_lock);
-	printf("%u burned out!\n", sim->coder[i].id);
-	pthread_mutex_unlock(&sim->print_lock);
-}
-
 static unsigned int	scan_coders(t_sim *sim)
 {
 	unsigned int	i;
@@ -46,7 +38,7 @@ static unsigned int	scan_coders(t_sim *sim)
 		if (is_burned_out(sim, i))
 		{
 			set_sim_stop(sim);
-			log_burnout(sim, i);
+			log_msg(&sim->coder[i], BURN_OUT);
 			return (0);
 		}
 		complete += check_compiles(sim, i);

@@ -1,37 +1,5 @@
 #include "codexion.h"
 
-static void	init_coders(t_sim *sim)
-{
-	unsigned int	i;
-
-	i = 0;
-	while(i < sim->config.number_of_coders)
-	{
-		sim->coder[i].id = i + 1;
-		sim->coder[i].compiles = 0;
-		sim->coder[i].bp_sim = sim;
-		i++;
-	}
-}
-
-static unsigned int	init_dongles(t_sim *sim)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (i < sim->config.number_of_coders)
-	{
-		sim->dongle[i].id = i + 1;
-		if (pthread_mutex_init(&sim->dongle[i].dongle_lock, NULL) != 0)
-		{
-			destroy_dongles_lock(sim, i);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
-}
-
 static unsigned int	init_sim_lock(t_sim *sim)
 {
 	if (pthread_mutex_init(&sim->print_lock, NULL) != 0)
@@ -43,32 +11,72 @@ static unsigned int	init_sim_lock(t_sim *sim)
 	return (1);
 }
 
-static int	init_failed(t_sim *sim, const char *error_msg)
+static unsigned int	init_dongles(t_sim *sim)
 {
-	fprintf(stderr, "Error: %s\n", error_msg);
-	free(sim->coder);
-	free(sim->dongle);
-	sim->coder = NULL;
-	sim->dongle = NULL;
-	return (0);
+	t_dongle	*d;
+
+	while (sim->dongles_ready < sim->config.number_of_coders)
+	{
+		d = &sim->dongle[sim->dongles_ready];
+		d->id = sim->dongles_ready + 1;
+		d->is_taken = 0;
+		if (pthread_mutex_init(&d->dongle_lock, NULL) != 0)
+			return (0);
+		if (pthread_cond_init(&d->dongle_cond, NULL) != 0)
+		{
+			pthread_mutex_destroy(&d->dongle_lock);
+			return (0);
+		}
+		sim->dongles_ready++;
+	}
+	return (1);
+}
+
+static unsigned int	init_coders(t_sim *sim)
+{
+	unsigned int	n;
+	t_coder			*c;
+
+	n = sim->config.number_of_coders;
+	while (sim->coders_ready < n)
+	{
+		c = &sim->coder[sim->coders_ready];
+		c->id = sim->coders_ready + 1;
+		c->compiles = 0;
+		c->last_compiled = 0;
+		c->bp_sim = sim;
+		c->first_dongle = &sim->dongle[sim->coders_ready];
+		c->second_dongle = &sim->dongle[(sim->coders_ready + 1) % n];
+		if (c->second_dongle->id < c->first_dongle->id)
+		{
+			c->first_dongle = &sim->dongle[(sim->coders_ready + 1) % n];
+			c->second_dongle = &sim->dongle[sim->coders_ready];
+		}
+		if (pthread_mutex_init(&c->state_lock, NULL) != 0)
+			return (0);
+		sim->coders_ready++;
+	}
+	return (1);
 }
 
 unsigned int	init_sim(t_sim *sim)
 {
+	const char	*err;
+
+	err = NULL;
 	sim->coder = malloc(sizeof(t_coder) * sim->config.number_of_coders);
 	sim->dongle = malloc(sizeof(t_dongle) * sim->config.number_of_coders);
 	if (!sim->coder || !sim->dongle)
-		return (init_failed(sim, "Error, malloc failed!\n"));
-	if (!init_sim_lock(sim))
-	{
-		destroy_sim_lock(sim);
-		return (init_failed(sim, "Error, simulation mutexes failed!\n"));
-	}
-	if (!init_dongles(sim))
-	{
-		destroy_sim_lock(sim);
-		return (init_failed(sim, "Error, dongles failed to init!\n"));
-	}
-	init_coders(sim);
-	return (1);
+		err = "malloc failed";
+	else if (!init_sim_lock(sim))
+		err = "simulation mutex init failed";
+	else if (!init_dongles(sim))
+		err = "dongle init failed";
+	else if (!init_coders(sim))
+		err = "coder init failed";
+	if (!err)
+		return (1);
+	fprintf(stderr, "Error: %s\n", err);
+	destroy_sim(sim);
+	return (0);
 }

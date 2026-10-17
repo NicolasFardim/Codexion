@@ -1,44 +1,44 @@
 #include "codexion.h"
 
-void	destroy_dongles_lock(t_sim *sim, unsigned int count)
+static void	destroy_coders(t_sim *sim)
 {
 	unsigned int	i;
 
 	i = 0;
-	while(i < count)
+	while (i < sim->coders_ready)
 	{
-		pthread_mutex_destroy(&sim->dongle[i].dongle_lock);
+		pthread_mutex_destroy(&sim->coder[i].state_lock);
 		i++;
 	}
+	i = 0;
 }
 
-void	destroy_sim_lock(t_sim *sim)
-{
-	if (sim->active_lock >= 2)
-		pthread_mutex_destroy(&sim->sim_lock);
-	if (sim->active_lock >= 1)
-		pthread_mutex_destroy(&sim->print_lock);
-}
-
-void	join_threads(t_sim *sim, unsigned int c)
+static void	destroy_dongles(t_sim *sim)
 {
 	unsigned int	i;
 
 	i = 0;
-	while(i < c)
+	while (i < sim->dongles_ready)
 	{
-		if (pthread_join(sim->coder[i].thread, NULL) != 0)
-			fprintf(stderr, "Couldn't join thread %d!\n", i);
+		pthread_mutex_destroy(&sim->dongle[i].dongle_lock);
+		pthread_cond_destroy(&sim->dongle[i].dongle_cond);
 		i++;
 	}
 }
 
 void	destroy_sim(t_sim *sim)
 {
-	destroy_dongles_lock(sim, sim->config.number_of_coders);
-	destroy_sim_lock(sim);
+	destroy_coders(sim);
+	destroy_dongles(sim);
+	if (sim->active_lock >= 2)
+		pthread_mutex_destroy(&sim->sim_lock);
+	if (sim->active_lock >= 1)
+		pthread_mutex_destroy(&sim->print_lock);
 	free(sim->coder);
 	free(sim->dongle);
 	sim->coder = NULL;
 	sim->dongle = NULL;
+	sim->coders_ready = 0;
+	sim->dongles_ready = 0;
+	sim->active_lock = 0;
 }

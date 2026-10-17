@@ -1,7 +1,6 @@
 CC			= cc
 NAME 		= codexion
-CFLAGS 		= -pthread -Wall -Wextra -Werror
-
+CFLAGS 		= -pthread -Wall -Wextra -Werror -g
 OBJ_DIR 	= obj
 
 SRCS 		= src/main.c \
@@ -10,7 +9,11 @@ SRCS 		= src/main.c \
 			  src/init/init_sim.c \
 			  src/init/free_sim.c \
 			  src/sim/helpers.c \
-			  src/sim/routine.c
+			  src/sim/threads.c \
+			  src/sim/monitor.c \
+			  src/sim/routine.c \
+			  src/sim/dongles.c \
+			  src/sim/log.c
 
 OBJS 		= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 HEADERS		= include/codexion.h include/types.h

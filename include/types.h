@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/06 00:44:14 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/15 17:57:31 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,37 +32,47 @@ typedef struct s_config
 
 typedef enum e_state
 {
+	TAKEN_DONGLE,
 	COMPILING,
 	DEBUGGING,
-	REFACTORING
+	REFACTORING,
+	BURN_OUT
 }	t_state;
 
 typedef struct s_dongle
 {
 	pthread_mutex_t	dongle_lock;
+	pthread_cond_t	dongle_cond;
 	unsigned int	id;
+	unsigned int	is_taken;
 }	t_dongle;
 
 typedef struct s_coder
 {
 	pthread_t		thread;
+	pthread_mutex_t	state_lock;
 	t_state			state;
-	t_dongle		*left_dongle;
-	t_dongle		*right_dongle;
+	t_dongle		*first_dongle;
+	t_dongle		*second_dongle;
 	unsigned int	id;
 	unsigned int	compiles;
+	long long int	last_compiled;
 	t_sim			*bp_sim;
 }	t_coder;
 
 struct s_sim
 {
+	pthread_t		monitor_thread;
 	t_coder			*coder;
 	t_dongle		*dongle;
 	t_config		config;
 	pthread_mutex_t	print_lock;
 	pthread_mutex_t	sim_lock;
 	long long int	start_ms;
+	unsigned int	sim_stop;
 	unsigned int	active_lock;
+	unsigned int	dongles_ready;
+	unsigned int	coders_ready;
 };
 
 #endif

@@ -1,25 +1,24 @@
 #include "codexion.h"
 
-unsigned int	start_threads(t_sim *sim)
-{
-	unsigned int	i;
 
-	sim->start_ms = get_ms();
-	i = 0;
-	while (i < sim->config.number_of_coders)
-	{
-		if (pthread_create(
-			&(sim->coder)[i].thread, NULL, routine, &(sim->coder)[i]) != 0
-		)
-		{
-			fprintf(stderr, "Couldn't create thread %u!\n", i);
-			join_threads(sim, i);
-			destroy_sim(sim);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
+static void	compiling(t_coder *coder)
+{
+	pthread_mutex_lock(&coder->state_lock);
+	coder->last_compiled = get_ms();
+	pthread_mutex_unlock(&coder->state_lock);
+	log_msg(coder->bp_sim, COMPILING);
+	usleep(coder->bp_sim->config.time_to_compile * 1000);
+	pthread_mutex_lock(&coder->state_lock);
+	coder->compiles++;
+	pthread_mutex_unlock(&coder->state_lock);
+}
+
+static void	debug_and_refactor(t_coder *coder)
+{
+	log_msg(coder->bp_sim, DEBUGGING);
+	usleep(coder->bp_sim->config.time_to_debug * 1000);
+	log_msg(coder->bp_sim, REFACTORING);
+	usleep(coder->bp_sim->config.time_to_refactor * 1000);
 }
 
 void	*routine(void *arg)
@@ -27,10 +26,12 @@ void	*routine(void *arg)
 	t_coder	*coder;
 
 	coder = (t_coder *)arg;
-	while (coder->compiles < coder->bp_sim->config.number_of_compiles_required)
+	while (is_sim_running(coder->bp_sim))
 	{
-		log_output(coder);
-		coder->compiles += 1;
+		if (!take_dongles(coder))
+			return (NULL);
+		compiling(coder);
+		debug_and_refactor(coder);
 	}
 	return (NULL);
 }
