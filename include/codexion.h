@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:48 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/16 12:18:25 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/20 14:31:38 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void			destroy_sim(t_sim *sim);
 void			*routine(void *arg);
 void			*monitor(void *arg);
 unsigned int	take_dongles(t_coder *coder);
-void			release_dongle(t_dongle *dongle);
+void			release_dongle(t_dongle *dongle, unsigned int cooldown);
 void			wake_all_dongles(t_sim *sim);
 void			set_sim_stop(t_sim *sim);
 unsigned int	is_sim_running(t_sim *sim);

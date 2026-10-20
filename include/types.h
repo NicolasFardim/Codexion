@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/15 17:57:31 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/20 14:21:10 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_dongle
 {
 	pthread_mutex_t	dongle_lock;
 	pthread_cond_t	dongle_cond;
+	long long int	avaliable;
 	unsigned int	id;
 	unsigned int	is_taken;
 }	t_dongle;

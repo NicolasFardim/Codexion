@@ -20,6 +20,7 @@ static unsigned int	init_dongles(t_sim *sim)
 		d = &sim->dongle[sim->dongles_ready];
 		d->id = sim->dongles_ready + 1;
 		d->is_taken = 0;
+		d->avaliable = 0;
 		if (pthread_mutex_init(&d->dongle_lock, NULL) != 0)
 			return (0);
 		if (pthread_cond_init(&d->dongle_cond, NULL) != 0)
