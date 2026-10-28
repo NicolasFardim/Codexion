@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/20 14:21:10 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/27 00:56:39 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,29 @@ typedef enum e_state
 	BURN_OUT
 }	t_state;
 
+typedef struct s_req
+{
+	unsigned int	coder_id;
+	long long int	deadline;
+	long long int	ticket;
+}	t_req;
+
+typedef struct s_heap
+{
+	t_req			data[2];
+	unsigned int	size;
+	unsigned int	is_edf;
+}	t_heap;
+
 typedef struct s_dongle
 {
 	pthread_mutex_t	dongle_lock;
 	pthread_cond_t	dongle_cond;
+	t_heap			queue;
 	long long int	avaliable;
 	unsigned int	id;
 	unsigned int	is_taken;
+	unsigned int	next_ticket;
 }	t_dongle;
 
 typedef struct s_coder

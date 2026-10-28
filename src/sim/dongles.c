@@ -1,12 +1,12 @@
 #include "codexion.h"
 
-void	release_dongle(t_dongle *dongle, unsigned int cooldown)
+void	release_dongle(t_dongle *d, unsigned int cooldown)
 {
-	pthread_mutex_lock(&dongle->dongle_lock);
-	dongle->is_taken = 0;
-	dongle->avaliable = get_ms() + cooldown;
-	pthread_cond_broadcast(&dongle->dongle_cond);
-	pthread_mutex_unlock(&dongle->dongle_lock);
+	pthread_mutex_lock(&d->dongle_lock);
+	d->is_taken = 0;
+	d->avaliable = get_ms() + cooldown;
+	pthread_cond_broadcast(&d->dongle_cond);
+	pthread_mutex_unlock(&d->dongle_lock);
 }
 
 static void	wait_cooldown(t_dongle *d)
@@ -18,33 +18,40 @@ static void	wait_cooldown(t_dongle *d)
 	pthread_cond_timedwait(&d->dongle_cond, &d->dongle_lock, &ts);
 }
 
-static unsigned int	try_take_dongle(t_coder *coder, t_dongle *dongle)
+static unsigned int	try_take_dongle(t_coder *c, t_dongle *d)
 {
-	pthread_mutex_lock(&dongle->dongle_lock);
-	while(is_sim_running(coder->bp_sim)
-	&& (dongle->is_taken || get_ms() < dongle->avaliable))
+	long long int	deadline;
+
+	pthread_mutex_lock(&c->state_lock);
+	deadline = c->last_compiled + c->bp_sim->config.time_to_burnout;
+	pthread_mutex_unlock(&c->state_lock);
+	pthread_mutex_lock(&d->dongle_lock);
+	request(c, d, deadline);
+	while(is_sim_running(c->bp_sim) && (d->is_taken
+		|| !has_priority(&d->queue, c->id) || get_ms() < d->avaliable))
 	{
-		if (dongle->is_taken)
-			pthread_cond_wait(&dongle->dongle_cond, &dongle->dongle_lock);
+		if (d->is_taken || !has_priority(&d->queue, c->id))
+			pthread_cond_wait(&d->dongle_cond, &d->dongle_lock);
 		else
-			wait_cooldown(dongle);
+			wait_cooldown(d);
 	}
-	if (!is_sim_running(coder->bp_sim))
+	if (!is_sim_running(c->bp_sim))
 	{
-		pthread_mutex_unlock(&dongle->dongle_lock);
+		pthread_mutex_unlock(&d->dongle_lock);
 		return (0);
 	}
-	dongle->is_taken = 1;
-	pthread_mutex_unlock(&dongle->dongle_lock);
-	log_msg(coder, TAKEN_DONGLE);
+	d->is_taken = 1;
+	heap_pop(&d->queue);
+	pthread_mutex_unlock(&d->dongle_lock);
+	log_msg(c, TAKEN_DONGLE);
 	return (1);
 }
 
-unsigned int	take_dongles(t_coder *coder)
+unsigned int	take_dongles(t_coder *c)
 {
-	if (!try_take_dongle(coder, coder->first_dongle))
+	if (!try_take_dongle(c, c->first_dongle))
 		return (0);
-	if (!try_take_dongle(coder, coder->second_dongle))
+	if (!try_take_dongle(c, c->second_dongle))
 		return (0);
 	return (1);
 }

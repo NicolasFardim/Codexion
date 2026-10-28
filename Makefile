@@ -8,6 +8,8 @@ SRCS 		= src/main.c \
 			  src/parser/parse_args.c \
 			  src/init/init_sim.c \
 			  src/init/free_sim.c \
+			  src/heap/heap_op.c \
+			  src/heap/heap_utils.c \
 			  src/sim/helpers.c \
 			  src/sim/threads.c \
 			  src/sim/monitor.c \
@@ -18,7 +20,7 @@ SRCS 		= src/main.c \
 OBJS 		= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 HEADERS		= include/codexion.h include/types.h
 
-VPATH 		= src:src/parser:src/init:src/sim
+VPATH 		= src:src/parser:src/init:src/sim:src/heap
 
 all: $(NAME)
 

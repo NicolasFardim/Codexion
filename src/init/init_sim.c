@@ -21,6 +21,8 @@ static unsigned int	init_dongles(t_sim *sim)
 		d->id = sim->dongles_ready + 1;
 		d->is_taken = 0;
 		d->avaliable = 0;
+		d->next_ticket = 0;
+		heap_init(&d->queue, sim);
 		if (pthread_mutex_init(&d->dongle_lock, NULL) != 0)
 			return (0);
 		if (pthread_cond_init(&d->dongle_cond, NULL) != 0)
