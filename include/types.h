@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/27 00:56:39 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/30 15:19:27 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ typedef struct s_heap
 
 typedef struct s_dongle
 {
-	pthread_mutex_t	dongle_lock;
-	pthread_cond_t	dongle_cond;
 	t_heap			queue;
 	long long int	avaliable;
 	unsigned int	id;
@@ -85,10 +83,11 @@ struct s_sim
 	t_config		config;
 	pthread_mutex_t	print_lock;
 	pthread_mutex_t	sim_lock;
+	pthread_mutex_t	table_lock;
+	pthread_cond_t	table_cond;
 	long long int	start_ms;
 	unsigned int	sim_stop;
 	unsigned int	active_lock;
-	unsigned int	dongles_ready;
 	unsigned int	coders_ready;
 };
 

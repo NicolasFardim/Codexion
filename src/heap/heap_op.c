@@ -39,20 +39,6 @@ static void	heapify_up(t_heap *heap, unsigned int i)
 	}
 }
 
-unsigned int	heap_pop(t_heap *heap)
-{
-	if (heap->size == 0)
-		return (0);
-	heap->size--;
-	if (heap->size > 0)
-	{
-		heap->data[0] = heap->data[heap->size];
-		heapify_down(heap, 0);
-	}
-	return (1);
-}
-
-
 unsigned int	heap_insert(t_heap *heap, t_req req)
 {
 	if (heap->size == 2)
@@ -60,5 +46,23 @@ unsigned int	heap_insert(t_heap *heap, t_req req)
 	heap->data[heap->size] = req;
 	heapify_up(heap, heap->size);
 	heap->size++;
+	return (1);
+}
+
+unsigned int	heap_remove(t_heap *heap, unsigned int coder_id)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < heap->size && heap->data[i].coder_id != coder_id)
+		i++;
+	if (i == heap->size)
+		return (0);
+	heap->size--;
+	if (i == heap->size)
+		return (1);
+	heap->data[i] = heap->data[heap->size];
+	heapify_down(heap, i);
+	heapify_up(heap, i);
 	return (1);
 }

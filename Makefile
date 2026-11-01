@@ -15,6 +15,7 @@ SRCS 		= src/main.c \
 			  src/sim/monitor.c \
 			  src/sim/routine.c \
 			  src/sim/dongles.c \
+			  src/sim/dongle_utils.c \
 			  src/sim/log.c
 
 OBJS 		= $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))

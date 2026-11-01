@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:35 by nicolas           #+#    #+#             */
-/*   Updated: 2026/09/29 15:40:06 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/10/30 15:21:13 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ static unsigned int	print_error(int arg_i, int error_i)
 	return (0);
 }
 
-/* ! Right now I allow value 0 for parameters (1 to 6)... Maybe I have to change
-this later */
 static int	check_arg_int(char *arg)
 {
 	size_t		i;

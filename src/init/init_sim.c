@@ -8,29 +8,30 @@ static unsigned int	init_sim_lock(t_sim *sim)
 	if (pthread_mutex_init(&sim->sim_lock, NULL) != 0)
 		return (0);
 	sim->active_lock++;
+	if (pthread_mutex_init(&sim->table_lock, NULL) != 0)
+		return (0);
+	sim->active_lock++;
+	if (pthread_cond_init(&sim->table_cond, NULL) != 0)
+		return (0);
+	sim->active_lock++;
 	return (1);
 }
 
 static unsigned int	init_dongles(t_sim *sim)
 {
-	t_dongle	*d;
+	t_dongle		*d;
+	unsigned int	i;
 
-	while (sim->dongles_ready < sim->config.number_of_coders)
+	i = 0;
+	while (i < sim->config.number_of_coders)
 	{
-		d = &sim->dongle[sim->dongles_ready];
-		d->id = sim->dongles_ready + 1;
+		d = &sim->dongle[i];
+		d->id = i + 1;
 		d->is_taken = 0;
 		d->avaliable = 0;
 		d->next_ticket = 0;
 		heap_init(&d->queue, sim);
-		if (pthread_mutex_init(&d->dongle_lock, NULL) != 0)
-			return (0);
-		if (pthread_cond_init(&d->dongle_cond, NULL) != 0)
-		{
-			pthread_mutex_destroy(&d->dongle_lock);
-			return (0);
-		}
-		sim->dongles_ready++;
+		i++;
 	}
 	return (1);
 }

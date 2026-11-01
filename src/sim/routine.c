@@ -21,6 +21,18 @@ static void	debug_and_refactor(t_coder *coder)
 	usleep(coder->bp_sim->config.time_to_refactor * 1000);
 }
 
+static void	release_dongles(t_coder *coder)
+{
+	t_sim	*sim;
+
+	sim = coder->bp_sim;
+	pthread_mutex_lock(&sim->table_lock);
+	release_dongle(coder->first_dongle, sim->config.dongle_cooldown);
+	release_dongle(coder->second_dongle, sim->config.dongle_cooldown);
+	pthread_cond_broadcast(&sim->table_cond);
+	pthread_mutex_unlock(&sim->table_lock);
+}
+
 void	*routine(void *arg)
 {
 	t_coder	*coder;
@@ -33,8 +45,7 @@ void	*routine(void *arg)
 		if (!take_dongles(coder))
 			return (NULL);
 		compiling(coder);
-		release_dongle(coder->first_dongle, sim->config.dongle_cooldown);
-		release_dongle(coder->second_dongle, sim->config.dongle_cooldown);
+		release_dongles(coder);
 		debug_and_refactor(coder);
 	}
 	return (NULL);
