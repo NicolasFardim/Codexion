@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dongles.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/01 15:10:12 by nicolas           #+#    #+#             */
+/*   Updated: 2026/11/01 15:16:44 by nicolas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 void	release_dongle(t_dongle *d, unsigned int cooldown)
@@ -33,6 +45,21 @@ static void	wait_turn(t_sim *sim, t_dongle *a, t_dongle *b)
 	pthread_cond_timedwait(&sim->table_cond, &sim->table_lock, &ts);
 }
 
+static int	try_take_dongles(t_coder *c, t_dongle *a, t_dongle *b)
+{
+	while (1)
+	{
+		if (!is_sim_running(c->bp_sim))
+		{
+			pthread_mutex_unlock(&c->bp_sim->table_lock);
+			return (0);
+		}
+		if (a != b && can_take(c, a, b))
+			return (1);
+		wait_turn(c->bp_sim, a, b);
+	}
+}
+
 unsigned int	take_dongles(t_coder *c)
 {
 	t_dongle	*a;
@@ -42,14 +69,8 @@ unsigned int	take_dongles(t_coder *c)
 	b = c->second_dongle;
 	pthread_mutex_lock(&c->bp_sim->table_lock);
 	request_both(c, a, b);
-	while (1)
-	{
-		if (!is_sim_running(c->bp_sim))
-			return (pthread_mutex_unlock(&c->bp_sim->table_lock), 0);
-		if (a != b && can_take(c, a, b))
-			break ;
-		wait_turn(c->bp_sim, a, b);
-	}
+	if (!try_take_dongles(c, a, b))
+		return (0);
 	heap_remove(&a->queue, c->id);
 	heap_remove(&b->queue, c->id);
 	a->is_taken = 1;

@@ -1,29 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heap_op.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/01 15:50:08 by nicolas           #+#    #+#             */
+/*   Updated: 2026/11/01 16:00:17 by nicolas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static void	heapify_down(t_heap *heap, unsigned int parent)
 {
 	unsigned int	child_l;
 	unsigned int	child_r;
-	unsigned int	smallest;
+	unsigned int	min;
 
 	while (1)
 	{
 		child_l = 2 * parent + 1;
 		child_r = 2 * parent + 2;
-		smallest = parent;
+		min = parent;
 		if (child_l < heap->size
-			&& priority(heap->data[child_l], heap->data[smallest], heap->is_edf))
-			smallest = child_l;
+			&& priority(heap->data[child_l], heap->data[min], heap->is_edf))
+			min = child_l;
 		if (child_r < heap->size
-			&& priority(heap->data[child_r], heap->data[smallest], heap->is_edf))
-			smallest = child_r;
-		if (smallest == parent)
+			&& priority(heap->data[child_r], heap->data[min], heap->is_edf))
+			min = child_r;
+		if (min == parent)
 			return ;
-		req_swap(&heap->data[parent], &heap->data[smallest]);
-		parent = smallest;
+		req_swap(&heap->data[parent], &heap->data[min]);
+		parent = min;
 	}
 }
-
 
 static void	heapify_up(t_heap *heap, unsigned int i)
 {

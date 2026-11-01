@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_sim.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/01 14:44:00 by nicolas           #+#    #+#             */
+/*   Updated: 2026/11/01 14:49:15 by nicolas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static unsigned int	init_sim_lock(t_sim *sim)
@@ -51,11 +63,6 @@ static unsigned int	init_coders(t_sim *sim)
 		c->bp_sim = sim;
 		c->first_dongle = &sim->dongle[sim->coders_ready];
 		c->second_dongle = &sim->dongle[(sim->coders_ready + 1) % n];
-		if (c->second_dongle->id < c->first_dongle->id)
-		{
-			c->first_dongle = &sim->dongle[(sim->coders_ready + 1) % n];
-			c->second_dongle = &sim->dongle[sim->coders_ready];
-		}
 		if (pthread_mutex_init(&c->state_lock, NULL) != 0)
 			return (0);
 		sim->coders_ready++;

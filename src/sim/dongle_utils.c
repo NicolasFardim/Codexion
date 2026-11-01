@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dongle_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/01 15:29:44 by nicolas           #+#    #+#             */
+/*   Updated: 2026/11/01 15:51:49 by nicolas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static unsigned int	is_free(t_dongle *d, long long int now)
@@ -12,6 +24,9 @@ static unsigned int	rival_goes_first(t_coder *c, t_dongle *d)
 	if (d->queue.size == 0 || has_priority(&d->queue, c->id))
 		return (0);
 	rival = &c->bp_sim->coder[d->queue.data[0].coder_id - 1];
+	if (get_ms() + c->bp_sim->config.time_to_compile
+		+ c->bp_sim->config.dongle_cooldown >= d->queue.data[0].deadline)
+		return (1);
 	return (!rival->first_dongle->is_taken
 		&& !rival->second_dongle->is_taken);
 }

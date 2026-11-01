@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 22:10:56 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/30 15:19:27 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/01 14:39:39 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typedef	struct s_sim	t_sim;
+typedef struct s_sim	t_sim;
 
 typedef struct s_config
 {

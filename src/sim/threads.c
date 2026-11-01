@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   threads.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/11/01 14:54:26 by nicolas           #+#    #+#             */
+/*   Updated: 2026/11/01 14:54:29 by nicolas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static unsigned int	thread_failed(t_sim *sim, int i)
@@ -35,8 +47,6 @@ unsigned int	start_threads(t_sim *sim)
 	return (1);
 }
 
-
-// Using return value of join just for debug, remove later
 void	join_threads(t_sim *sim, int c)
 {
 	int	i;

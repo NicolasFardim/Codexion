@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:48 by nicolas           #+#    #+#             */
-/*   Updated: 2026/10/31 15:23:50 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/01 14:36:04 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include <string.h>
 # include <pthread.h>
 # include "types.h"
-
 
 unsigned int	parse_args(int argc, char **argv, t_config *config);
 unsigned int	validate_args(char **argv);
@@ -44,6 +43,5 @@ void			set_sim_stop(t_sim *sim);
 unsigned int	is_sim_running(t_sim *sim);
 long long int	get_ms(void);
 void			log_msg(t_coder *coder, t_state state);
-
 
 #endif
