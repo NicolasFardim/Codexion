@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/01 15:16:54 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/01 15:16:56 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 09:13:48 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,15 @@ unsigned int	is_sim_running(t_sim *sim)
 		r = 1;
 	pthread_mutex_unlock(&sim->sim_lock);
 	return (r);
+}
+
+void	ms_sleep(t_sim *sim, long long int ms)
+{
+	long long int	end;
+
+	end = get_ms() + ms;
+	while (get_ms() < end && is_sim_running(sim))
+		usleep(500);
 }
 
 void	request(t_coder *c, t_dongle *d, long long int dl)

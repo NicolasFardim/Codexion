@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/16 17:56:48 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/01 14:36:04 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 09:16:51 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ unsigned int	can_take(t_coder *c, t_dongle *a, t_dongle *b);
 void			set_sim_stop(t_sim *sim);
 unsigned int	is_sim_running(t_sim *sim);
 long long int	get_ms(void);
+void			ms_sleep(t_sim *sim, long long int ms);
 void			log_msg(t_coder *coder, t_state state);
 
 #endif

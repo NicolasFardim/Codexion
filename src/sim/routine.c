@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/01 15:03:22 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/01 15:03:26 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 09:18:17 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	compiling(t_coder *coder)
 	coder->last_compiled = get_ms();
 	pthread_mutex_unlock(&coder->state_lock);
 	log_msg(coder, COMPILING);
-	usleep(coder->bp_sim->config.time_to_compile * 1000);
+	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_compile);
 	pthread_mutex_lock(&coder->state_lock);
 	coder->compiles++;
 	pthread_mutex_unlock(&coder->state_lock);
@@ -27,9 +27,9 @@ static void	compiling(t_coder *coder)
 static void	debug_and_refactor(t_coder *coder)
 {
 	log_msg(coder, DEBUGGING);
-	usleep(coder->bp_sim->config.time_to_debug * 1000);
+	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_debug);
 	log_msg(coder, REFACTORING);
-	usleep(coder->bp_sim->config.time_to_refactor * 1000);
+	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_debug);
 }
 
 static void	release_dongles(t_coder *coder)
