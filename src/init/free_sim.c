@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/01 14:50:19 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/01 14:50:23 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 09:43:39 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static void	destroy_coders(t_sim *sim)
 		pthread_mutex_destroy(&sim->coder[i].state_lock);
 		i++;
 	}
-	i = 0;
 }
 
 void	destroy_sim(t_sim *sim)

@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/01 15:03:22 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/03 09:18:17 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 09:40:50 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	debug_and_refactor(t_coder *coder)
 	log_msg(coder, DEBUGGING);
 	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_debug);
 	log_msg(coder, REFACTORING);
-	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_debug);
+	ms_sleep(coder->bp_sim, coder->bp_sim->config.time_to_refactor);
 }
 
 static void	release_dongles(t_coder *coder)

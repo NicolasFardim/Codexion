@@ -6,7 +6,7 @@
 /*   By: nicolas <nicolas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/01 14:54:26 by nicolas           #+#    #+#             */
-/*   Updated: 2026/11/01 14:54:29 by nicolas          ###   ########.fr       */
+/*   Updated: 2026/11/03 10:00:30 by nicolas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static unsigned int	thread_failed(t_sim *sim, int i)
 {
-	fprintf(stderr, "Couldn't create thread %u!\n", i);
+	fprintf(stderr, "Couldn't create thread %i!\n", i);
 	set_sim_stop(sim);
 	join_threads(sim, i);
 	destroy_sim(sim);
@@ -54,7 +54,7 @@ void	join_threads(t_sim *sim, int c)
 	i = 0;
 	if (c == -1)
 	{
-		fprintf(stderr, "Monitor failed, any thread was created!\n");
+		fprintf(stderr, "Monitor failed, no thread was created!\n");
 		return ;
 	}
 	if (pthread_join(sim->monitor_thread, NULL) != 0)
@@ -62,7 +62,7 @@ void	join_threads(t_sim *sim, int c)
 	while (i < c)
 	{
 		if (pthread_join(sim->coder[i].thread, NULL) != 0)
-			fprintf(stderr, "Couldn't join thread %d!\n", i);
+			fprintf(stderr, "Couldn't join thread %i!\n", i);
 		i++;
 	}
 }
